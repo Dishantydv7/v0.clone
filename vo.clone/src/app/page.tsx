@@ -2,6 +2,7 @@
 import { useState } from "react";
 import {
   CopilotTask,
+  
   useCopilotContext,
   useMakeCopilotReadable,
 } from "@copilotkit/react-core";
@@ -25,6 +26,32 @@ export default function Home() {
   const [showDialog, setShowDialog] = useState<boolean>(false);
   const [codeCommand, setCodeCommand] = useState<string>("");
 
+  const readableCode = useMakeCopilotReadable(codeToDisplay);
+
+  const generateCode = new CopilotTask({
+    instructions: codeCommand,
+    actions: [
+      {
+        name: "generateCode",
+        description: "Create Code Snippet with React.js, tailwindcss.",
+        parameters: [
+          {
+            name: "code",
+            type: "string",
+            description: "Code to be generated",
+            required: true,
+          },
+        ],
+        handler: async ({ code }) => {
+          setCode((prev) => [...prev, code]);
+          setCodeToDisplay(code);
+        },
+      },
+    ],
+  });
+
+  const context = useCopilotContext();
+  
   return (
     <>
       <main className="bg-white min-h-screen px-4">
